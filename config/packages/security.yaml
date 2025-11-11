@@ -5,18 +5,23 @@ security:
     # https://symfony.com/doc/current/security.html#loading-the-user-the-user-provider
     providers:
         # used to reload user from session & other features (e.g. switch_user)
-        app_user_provider:
-            entity:
-                class: App\Entity\User
-                property: email
+        in_memory:
+            memory:
+                users:
+                    admin:
+                        password: '$2y$13$28nXniESmS4IS09Ky7SjPe4tKqKaneJypLqRA.4gLbpx8EBRUpg/a' # password is 'admin123'
+                        roles: ['ROLE_ADMIN']
+                    user:
+                        password: '$2y$13$UeiVGrrnLRpNd9vMbkxkg.y5lUYObrixK2WTk0SXwx629ydUm415O' # password is 'user123'
+                        roles: ['ROLE_USER']
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
         main:
             lazy: true
-            provider: app_user_provider
-
+            provider: in_memory
+            http_basic: ~
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#the-firewall
 
@@ -27,7 +32,7 @@ security:
     # Note: Only the *first* access control that matches will be used
     access_control:
         # - { path: ^/admin, roles: ROLE_ADMIN }
-         - { path: ^/dashboard, roles: ROLE_USER }
+         - { path: ^/dashboard, roles: [ROLE_USER, ROLE_ADMIN] }
 
 when@test:
     security:
